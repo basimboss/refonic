@@ -115,7 +115,10 @@ app.post('/api/products', async (req, res) => {
     let sql = `INSERT INTO products (name, im_code, status, date, sale_price, sale_date, service_date, barcode) VALUES (?,?,?,?,?,?,?,?)`;
     if (process.env.DATABASE_URL) sql += " RETURNING id";
 
-    const params = [name, im_code, status, date, sale_price, sale_date, service_date, barcode];
+    // Postgres fix: Convert empty string to null for numeric fields
+    const safeSalePrice = sale_price === '' ? null : sale_price;
+
+    const params = [name, im_code, status, date, safeSalePrice, sale_date, service_date, barcode];
 
     try {
         const result = await db.query(sql, params);
@@ -133,7 +136,11 @@ app.put('/api/products/:id', async (req, res) => {
     const { name, im_code, status, date, sale_price, sale_date, service_date, barcode } = req.body;
 
     const sql = `UPDATE products SET name = ?, im_code = ?, status = ?, date = ?, sale_price = ?, sale_date = ?, service_date = ?, barcode = ? WHERE id = ?`;
-    const params = [name, im_code, status, date, sale_price, sale_date, service_date, barcode, id];
+
+    // Postgres fix: Convert empty string to null for numeric fields
+    const safeSalePrice = sale_price === '' ? null : sale_price;
+
+    const params = [name, im_code, status, date, safeSalePrice, sale_date, service_date, barcode, id];
 
     try {
         await db.query(sql, params);
