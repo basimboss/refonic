@@ -1,0 +1,13 @@
+{
+    "name": "refonic-app",
+    "version": "1.0.0",
+    "description": "Refonic Inventory App",
+    "scripts": {
+        "install-all": "npm install --prefix server && npm install --prefix client",
+        "build": "npm run install-all && npm run build --prefix client",
+        "start": "node server/server.js"
+    },
+    "engines": {
+        "node": ">=16.0.0"
+    }
+}
