@@ -11,6 +11,12 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
+// Log all requests
+app.use((req, res, next) => {
+    console.log(`[REQUEST] ${req.method} ${req.path}`);
+    next();
+});
+
 // --- Authentication ---
 
 // Login
@@ -31,6 +37,7 @@ app.post('/api/auth/login', async (req, res) => {
             res.status(401).json({ error: 'Invalid password' });
         }
     } catch (err) {
+        console.error("Error adding product:", err);
         res.status(500).json({ error: err.message });
     }
 });
@@ -56,6 +63,7 @@ app.post('/api/auth/change-password', async (req, res) => {
             res.status(401).json({ error: 'Incorrect old password' });
         }
     } catch (err) {
+        console.error("Error adding product:", err);
         res.status(500).json({ error: err.message });
     }
 });
@@ -90,6 +98,7 @@ app.get('/api/products', async (req, res) => {
         const result = await db.query(query, params);
         res.json({ data: result.rows });
     } catch (err) {
+        console.error("Error adding product:", err);
         res.status(500).json({ error: err.message });
     }
 });
@@ -113,6 +122,7 @@ app.post('/api/products', async (req, res) => {
         const newId = result.lastID || (result.rows[0] ? result.rows[0].id : null);
         res.json({ message: 'Product added', id: newId });
     } catch (err) {
+        console.error("Error adding product:", err);
         res.status(500).json({ error: err.message });
     }
 });
@@ -129,6 +139,7 @@ app.put('/api/products/:id', async (req, res) => {
         await db.query(sql, params);
         res.json({ message: 'Product updated' });
     } catch (err) {
+        console.error("Error adding product:", err);
         res.status(500).json({ error: err.message });
     }
 });
@@ -142,6 +153,7 @@ app.get('/api/products/scan/:barcode', async (req, res) => {
         if (!row) return res.status(404).json({ message: 'Product not found' });
         res.json({ data: row });
     } catch (err) {
+        console.error("Error adding product:", err);
         res.status(500).json({ error: err.message });
     }
 });
