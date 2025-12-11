@@ -114,7 +114,10 @@ const database = {
         const migrationQueries = [
             "ALTER TABLE products ADD COLUMN storage TEXT",
             "ALTER TABLE products ADD COLUMN ram TEXT",
-            "ALTER TABLE products ADD COLUMN sponsor_name TEXT"
+            "ALTER TABLE products ADD COLUMN sponsor_name TEXT",
+            // Phase 3: Sales Details
+            "ALTER TABLE products ADD COLUMN buyer_name TEXT",
+            "ALTER TABLE products ADD COLUMN exchange_details TEXT"
         ];
 
         for (const query of migrationQueries) {

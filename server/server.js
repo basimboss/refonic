@@ -104,45 +104,6 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-// Add Product
-app.post('/api/products', async (req, res) => {
-    const { name, im_code, status, date, sale_price, sale_date, service_date, barcode, storage, ram, sponsor_name } = req.body;
-
-    let sql = `INSERT INTO products (name, im_code, status, date, sale_price, sale_date, service_date, barcode, storage, ram, sponsor_name) VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
-    if (process.env.DATABASE_URL) sql += " RETURNING id";
-
-    const safeSalePrice = sale_price === '' ? null : sale_price;
-    const params = [name, im_code, status, date, safeSalePrice, sale_date, service_date, barcode, storage, ram, sponsor_name];
-
-    try {
-        const result = await db.query(sql, params);
-        const newId = result.lastID || (result.rows[0] ? result.rows[0].id : null);
-        res.json({ message: 'Product added', id: newId });
-    } catch (err) {
-        console.error("Error adding product:", err);
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Update Product
-app.put('/api/products/:id', async (req, res) => {
-    const { id } = req.params;
-    const { name, im_code, status, date, sale_price, sale_date, service_date, barcode, storage, ram, sponsor_name } = req.body;
-
-    const sql = `UPDATE products SET name = ?, im_code = ?, status = ?, date = ?, sale_price = ?, sale_date = ?, service_date = ?, barcode = ?, storage = ?, ram = ?, sponsor_name = ? WHERE id = ?`;
-
-    const safeSalePrice = sale_price === '' ? null : sale_price;
-    const params = [name, im_code, status, date, safeSalePrice, sale_date, service_date, barcode, storage, ram, sponsor_name, id];
-
-    try {
-        await db.query(sql, params);
-        res.json({ message: 'Product updated' });
-    } catch (err) {
-        console.error("Error updating product:", err);
-        res.status(500).json({ error: err.message });
-    }
-});
-
 // Scan Barcode (Find Product)
 app.get('/api/products/scan/:barcode', async (req, res) => {
     const { barcode } = req.params;

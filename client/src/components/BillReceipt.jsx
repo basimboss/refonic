@@ -39,6 +39,20 @@ const BillReceipt = ({ product, onClose }) => {
                             <span>Sponsor</span>
                             <span>{product.sponsor_name || '-'}</span>
                         </div>
+
+                        {product.buyer_name && (
+                            <div className="flex justify-between text-sm text-gray-600">
+                                <span>Buyer</span>
+                                <span className="font-bold">{product.buyer_name}</span>
+                            </div>
+                        )}
+
+                        {product.exchange_details && (
+                            <div className="mt-4 pt-4 border-t border-gray-200">
+                                <span className="block text-xs font-bold text-gray-500 uppercase mb-1">Exchange</span>
+                                <p className="text-sm text-gray-600 whitespace-pre-wrap">{product.exchange_details}</p>
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex justify-between items-center border-t-2 border-black pt-4 mb-8">
