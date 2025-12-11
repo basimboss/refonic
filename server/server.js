@@ -71,6 +71,7 @@ app.post('/api/auth/change-password', async (req, res) => {
 // --- Products ---
 
 // Get All Products (with optional search)
+// Get All Products (with optional search)
 app.get('/api/products', async (req, res) => {
     const { search, status } = req.query;
     let query = "SELECT * FROM products";
@@ -83,9 +84,9 @@ app.get('/api/products', async (req, res) => {
     }
 
     if (search) {
-        conditions.push("(name LIKE ? OR im_code LIKE ? OR barcode LIKE ?)");
+        conditions.push("(name LIKE ? OR im_code LIKE ? OR barcode LIKE ? OR sponsor_name LIKE ?)");
         const likeTerm = `%${search}%`;
-        params.push(likeTerm, likeTerm, likeTerm);
+        params.push(likeTerm, likeTerm, likeTerm, likeTerm);
     }
 
     if (conditions.length > 0) {
@@ -98,27 +99,20 @@ app.get('/api/products', async (req, res) => {
         const result = await db.query(query, params);
         res.json({ data: result.rows });
     } catch (err) {
-        console.error("Error adding product:", err);
+        console.error("Error getting products:", err);
         res.status(500).json({ error: err.message });
     }
 });
 
 // Add Product
 app.post('/api/products', async (req, res) => {
-    const { name, im_code, status, date, sale_price, sale_date, service_date, barcode } = req.body;
+    const { name, im_code, status, date, sale_price, sale_date, service_date, barcode, storage, ram, sponsor_name } = req.body;
 
-    // For Postgres, we need RETURNING id to get the new ID. SQLite uses this.lastID.
-    // Our adapter handles this.lastID for SQLite, but for PG we need to be explicit in SQL if we want it.
-    // Let's use a trick: The adapter's convertSql handles params.
-    // For PG, we should append RETURNING id.
-
-    let sql = `INSERT INTO products (name, im_code, status, date, sale_price, sale_date, service_date, barcode) VALUES (?,?,?,?,?,?,?,?)`;
+    let sql = `INSERT INTO products (name, im_code, status, date, sale_price, sale_date, service_date, barcode, storage, ram, sponsor_name) VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
     if (process.env.DATABASE_URL) sql += " RETURNING id";
 
-    // Postgres fix: Convert empty string to null for numeric fields
     const safeSalePrice = sale_price === '' ? null : sale_price;
-
-    const params = [name, im_code, status, date, safeSalePrice, sale_date, service_date, barcode];
+    const params = [name, im_code, status, date, safeSalePrice, sale_date, service_date, barcode, storage, ram, sponsor_name];
 
     try {
         const result = await db.query(sql, params);
@@ -133,20 +127,18 @@ app.post('/api/products', async (req, res) => {
 // Update Product
 app.put('/api/products/:id', async (req, res) => {
     const { id } = req.params;
-    const { name, im_code, status, date, sale_price, sale_date, service_date, barcode } = req.body;
+    const { name, im_code, status, date, sale_price, sale_date, service_date, barcode, storage, ram, sponsor_name } = req.body;
 
-    const sql = `UPDATE products SET name = ?, im_code = ?, status = ?, date = ?, sale_price = ?, sale_date = ?, service_date = ?, barcode = ? WHERE id = ?`;
+    const sql = `UPDATE products SET name = ?, im_code = ?, status = ?, date = ?, sale_price = ?, sale_date = ?, service_date = ?, barcode = ?, storage = ?, ram = ?, sponsor_name = ? WHERE id = ?`;
 
-    // Postgres fix: Convert empty string to null for numeric fields
     const safeSalePrice = sale_price === '' ? null : sale_price;
-
-    const params = [name, im_code, status, date, safeSalePrice, sale_date, service_date, barcode, id];
+    const params = [name, im_code, status, date, safeSalePrice, sale_date, service_date, barcode, storage, ram, sponsor_name, id];
 
     try {
         await db.query(sql, params);
         res.json({ message: 'Product updated' });
     } catch (err) {
-        console.error("Error adding product:", err);
+        console.error("Error updating product:", err);
         res.status(500).json({ error: err.message });
     }
 });

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import BarcodeScanner from './BarcodeScanner';
+import BillReceipt from './BillReceipt';
 
 const ProductModal = ({ product, onClose, onSave }) => {
     const [formData, setFormData] = useState({
@@ -10,13 +11,16 @@ const ProductModal = ({ product, onClose, onSave }) => {
         sale_price: '',
         sale_date: new Date().toISOString().split('T')[0],
         service_date: new Date().toISOString().split('T')[0],
-        barcode: ''
+        barcode: '',
+        storage: '',
+        ram: '',
+        sponsor_name: ''
     });
     const [showScanner, setShowScanner] = useState(false);
+    const [showReceipt, setShowReceipt] = useState(false);
 
     useEffect(() => {
         if (product) {
-            // Merge default values with product data to ensure no fields are undefined
             setFormData(prev => ({ ...prev, ...product }));
         }
     }, [product]);
@@ -36,11 +40,23 @@ const ProductModal = ({ product, onClose, onSave }) => {
         onSave(formData);
     };
 
+    const handleSell = async () => {
+        // Update status to Sales and save, then show receipt
+        const soldData = { ...formData, status: 'Sales', sale_date: new Date().toISOString().split('T')[0] };
+        await onSave(soldData); // Save to DB first
+        setFormData(soldData); // Update local state
+        setShowReceipt(true);
+    };
+
+    if (showReceipt) {
+        return <BillReceipt product={formData} onClose={onClose} />;
+    }
+
     return (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/80 backdrop-blur-sm animate-fade-in">
-            <div className="w-full max-w-lg bg-[#1E1E1E] rounded-t-[24px] p-6 pb-8 h-[85vh] overflow-y-auto slide-up-panel border-t border-white/10">
+            <div className="w-full max-w-lg bg-[#1E1E1E] rounded-t-[24px] p-6 pb-8 h-[90vh] overflow-y-auto slide-up-panel border-t border-white/10">
 
-                {/* Handle bar for visual cue */}
+                {/* Handle bar */}
                 <div className="w-12 h-1 bg-gray-700 rounded-full mx-auto mb-6"></div>
 
                 <div className="flex justify-between items-center mb-6">
@@ -57,6 +73,53 @@ const ProductModal = ({ product, onClose, onSave }) => {
                             value={formData.name}
                             onChange={handleChange}
                             required
+                            className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">RAM</label>
+                            <div className="relative">
+                                <input
+                                    name="ram"
+                                    list="ram-options"
+                                    placeholder="e.g. 8GB"
+                                    value={formData.ram}
+                                    onChange={handleChange}
+                                    className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                                />
+                                <datalist id="ram-options">
+                                    {[2, 4, 8, 12, 16, 18, 24, 64].map(r => <option key={r} value={`${r}GB`} />)}
+                                </datalist>
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Storage</label>
+                            <div className="relative">
+                                <input
+                                    name="storage"
+                                    list="storage-options"
+                                    placeholder="e.g. 128GB"
+                                    value={formData.storage}
+                                    onChange={handleChange}
+                                    className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                                />
+                                <datalist id="storage-options">
+                                    {[32, 64, 128, 256, 512].map(s => <option key={s} value={`${s}GB`} />)}
+                                </datalist>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Sponsor Name</label>
+                        <input
+                            name="sponsor_name"
+                            placeholder="Sponsor Name"
+                            value={formData.sponsor_name}
+                            onChange={handleChange}
+                            className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
                         />
                     </div>
 
@@ -67,6 +130,7 @@ const ProductModal = ({ product, onClose, onSave }) => {
                                 name="status"
                                 value={formData.status}
                                 onChange={handleChange}
+                                className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 appearance-none"
                             >
                                 <option value="Stock">Stock</option>
                                 <option value="Sales">Sales</option>
@@ -82,6 +146,7 @@ const ProductModal = ({ product, onClose, onSave }) => {
                                 name={formData.status === 'Sales' ? 'sale_date' : formData.status === 'Service' ? 'service_date' : 'date'}
                                 value={formData.status === 'Sales' ? formData.sale_date : formData.status === 'Service' ? formData.service_date : formData.date}
                                 onChange={handleChange}
+                                className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
                             />
                         </div>
                     </div>
@@ -96,7 +161,7 @@ const ProductModal = ({ product, onClose, onSave }) => {
                                     name="sale_price"
                                     value={formData.sale_price}
                                     onChange={handleChange}
-                                    className="pl-8 border-blue-500/50 focus:border-blue-500"
+                                    className="w-full bg-black/30 border border-blue-500/50 rounded-xl px-4 py-3 pl-8 text-white focus:outline-none focus:border-blue-500"
                                     placeholder="0.00"
                                 />
                             </div>
@@ -110,6 +175,7 @@ const ProductModal = ({ product, onClose, onSave }) => {
                             placeholder="IM Code or Description"
                             value={formData.im_code}
                             onChange={handleChange}
+                            className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
                         />
                     </div>
 
@@ -121,24 +187,40 @@ const ProductModal = ({ product, onClose, onSave }) => {
                                 value={formData.barcode}
                                 onChange={handleChange}
                                 placeholder="Scan or type..."
-                                className="flex-1"
+                                className="flex-1 bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowScanner(true)}
-                                className="btn btn-secondary px-4"
+                                className="bg-white/10 hover:bg-white/20 text-white px-4 rounded-xl transition-colors"
                             >
                                 📷
                             </button>
                         </div>
                     </div>
 
-                    <div className="pt-4 mt-auto">
+                    <div className="pt-4 mt-auto flex gap-3">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="flex-1 bg-white/10 hover:bg-white/20 text-white font-bold py-4 rounded-xl transition-colors"
+                        >
+                            Cancel
+                        </button>
+                        {product?.id && formData.status !== 'Sales' && (
+                            <button
+                                type="button"
+                                onClick={handleSell}
+                                className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl transition-colors"
+                            >
+                                Sell
+                            </button>
+                        )}
                         <button
                             type="submit"
-                            className="btn btn-primary w-full py-4 text-lg"
+                            className="flex-[2] bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-4 rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-blue-500/20"
                         >
-                            {product?.id ? 'Save Changes' : 'Add to Inventory'}
+                            {product?.id ? 'Save' : 'Add'}
                         </button>
                     </div>
                 </form>

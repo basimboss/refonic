@@ -109,6 +109,30 @@ const database = {
         } catch (err) {
             console.error("Schema initialization error:", err);
         }
+
+        // Phase 2: Add new columns if they don't exist (Migration)
+        const migrationQueries = [
+            "ALTER TABLE products ADD COLUMN storage TEXT",
+            "ALTER TABLE products ADD COLUMN ram TEXT",
+            "ALTER TABLE products ADD COLUMN sponsor_name TEXT"
+        ];
+
+        for (const query of migrationQueries) {
+            try {
+                // Postgres supports IF NOT EXISTS in ALTER TABLE, but SQLite doesn't always.
+                // Simplest way: Try to add, ignore error if column exists.
+                if (pool) {
+                    await database.query(query.replace("ADD COLUMN", "ADD COLUMN IF NOT EXISTS"));
+                } else {
+                    await database.query(query);
+                }
+            } catch (err) {
+                // Ignore "duplicate column" errors
+                if (!err.message.includes("duplicate column") && !err.message.includes("no such column")) {
+                    console.log(`Migration note: ${err.message}`);
+                }
+            }
+        }
     }
 };
 
