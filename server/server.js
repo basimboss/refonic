@@ -116,71 +116,50 @@ app.put('/api/products/:id', async (req, res) => {
             ]
         );
         res.json({ message: 'Product updated successfully' });
-    } catch (err) {
-        console.error("Error updating product:", err);
-        res.status(500).json({ error: err.message });
-    }
-});
+        app.get('/api/products', async (req, res) => {
+            const { search, status } = req.query;
+            let query = "SELECT * FROM products";
+            let params = [];
+            let conditions = [];
 
-// Delete Product
-app.delete('/api/products/:id', async (req, res) => {
-    const { id } = req.params;
-    console.log(`[DELETE] Request to delete product id: ${id}`);
-    try {
-        await db.query("DELETE FROM products WHERE id = ?", [id]);
-        res.json({ message: 'Product deleted successfully' });
-    } catch (err) {
-        console.error("Error deleting product:", err);
-        res.status(500).json({ error: err.message });
-    }
-});
+            if (status && status !== 'All') {
+                conditions.push("status = ?");
+                params.push(status);
+            }
 
-// Get All Products (with optional search)
-// Get All Products (with optional search)
-app.get('/api/products', async (req, res) => {
-    const { search, status } = req.query;
-    let query = "SELECT * FROM products";
-    let params = [];
-    let conditions = [];
+            if (search) {
+                conditions.push("(name LIKE ? OR im_code LIKE ? OR barcode LIKE ? OR sponsor_name LIKE ?)");
+                const likeTerm = `%${search}%`;
+                params.push(likeTerm, likeTerm, likeTerm, likeTerm);
+            }
 
-    if (status && status !== 'All') {
-        conditions.push("status = ?");
-        params.push(status);
-    }
+            if (conditions.length > 0) {
+                query += " WHERE " + conditions.join(" AND ");
+            }
 
-    if (search) {
-        conditions.push("(name LIKE ? OR im_code LIKE ? OR barcode LIKE ? OR sponsor_name LIKE ?)");
-        const likeTerm = `%${search}%`;
-        params.push(likeTerm, likeTerm, likeTerm, likeTerm);
-    }
+            query += " ORDER BY id DESC";
 
-    if (conditions.length > 0) {
-        query += " WHERE " + conditions.join(" AND ");
-    }
+            try {
+                const result = await db.query(query, params);
+                res.json({ data: result.rows });
+            } catch (err) {
+                console.error("Error getting products:", err);
+                res.status(500).json({ error: err.message });
+            }
+        });
 
-    query += " ORDER BY id DESC";
+        // --- Serve Static Assets in Production ---
+        if (process.env.NODE_ENV === 'production') {
+            // Serve static files from the React app
+            app.use(express.static(path.join(__dirname, '../client/dist')));
 
-    try {
-        const result = await db.query(query, params);
-        res.json({ data: result.rows });
-    } catch (err) {
-        console.error("Error getting products:", err);
-        res.status(500).json({ error: err.message });
-    }
-});
+            // The "catchall" handler: for any request that doesn't
+            // match one above, send back React's index.html file.
+            app.get('*', (req, res) => {
+                res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+            });
+        }
 
-// --- Serve Static Assets in Production ---
-if (process.env.NODE_ENV === 'production') {
-    // Serve static files from the React app
-    app.use(express.static(path.join(__dirname, '../client/dist')));
-
-    // The "catchall" handler: for any request that doesn't
-    // match one above, send back React's index.html file.
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-    });
-}
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });

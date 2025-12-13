@@ -82,11 +82,14 @@ const Dashboard = ({ onLogout }) => {
                 setEditingProduct(data.data);
                 setIsModalOpen(true);
             } else {
-                setEditingProduct({ barcode, status: 'Stock' });
-                setIsModalOpen(true);
+                if (window.confirm('Product not found! Do you want to add a new product with this barcode?')) {
+                    setEditingProduct({ barcode: cleanBarcode, status: 'Stock' });
+                    setIsModalOpen(true);
+                }
             }
         } catch (err) {
             console.error("Error scanning product", err);
+            alert("Error scanning product. Please check your connection.");
         }
     };
 
