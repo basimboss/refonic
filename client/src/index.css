@@ -2,6 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* User Design Variables */
+  --font-family-poppins: 'Poppins', sans-serif;
+  --text-white: rgba(255, 255, 255, 1);
+  --text-black: rgba(0, 0, 0, 1);
+  --text-rgb-25-81-255: rgba(25, 81, 255, 1);
+  --text-rgb-219-219-219: rgba(219, 219, 219, 1);
+  --text-rgb-31-30-31: rgba(31, 30, 31, 1);
+  --text-rgb-199-199-199: rgba(199, 199, 199, 1);
+  --text-rgb-113-113-113: rgba(113, 113, 113, 1);
+  --text-rgb-167-79-211: rgba(167, 79, 211, 1);
+  --text-rgb-211-79-79: rgba(211, 79, 79, 1);
+  --text-rgb-200-211-79: rgba(200, 211, 79, 1);
+  --text-rgb-117-117-117: rgba(117, 117, 117, 1);
+  --text-rgb-54-65-82: rgba(54, 65, 82, 1);
+  --text-rgb-142-142-142: rgba(142, 142, 142, 1);
+  --text-rgb-81-81-81: rgba(81, 81, 81, 1);
+  --text-rgb-69-69-69: rgba(69, 69, 69, 1);
+
+  /* Semantic Variables (Mapped to Design) */
+  --bg-primary: #000000;
+  --bg-secondary: #121212;
+  --bg-card: rgba(18, 18, 18, 0.8);
+  --text-primary: var(--text-white);
+  --text-secondary: var(--text-rgb-113-113-113);
+  --accent-primary: var(--text-rgb-25-81-255);
+  --accent-secondary: var(--text-rgb-167-79-211);
+  --accent-success: var(--text-rgb-200-211-79);
+  --accent-warning: var(--text-rgb-211-79-79);
+
+  /* UI Effects */
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --radius-lg: 24px;
+  --radius-md: 16px;
+}
+
 h3 {
   margin: 0;
   font-weight: 600;
@@ -148,7 +185,8 @@ select:focus {
   justify-content: space-around;
   align-items: center;
   z-index: 100;
-  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  /* padding-bottom: max(12px, env(safe-area-inset-bottom)); */
+  padding-bottom: 20px;
 }
 
 .nav-item {
