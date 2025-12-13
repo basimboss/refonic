@@ -122,6 +122,19 @@ app.put('/api/products/:id', async (req, res) => {
     }
 });
 
+// Delete Product
+app.delete('/api/products/:id', async (req, res) => {
+    const { id } = req.params;
+    console.log(`[DELETE] Request to delete product id: ${id}`);
+    try {
+        await db.query("DELETE FROM products WHERE id = ?", [id]);
+        res.json({ message: 'Product deleted successfully' });
+    } catch (err) {
+        console.error("Error deleting product:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Get All Products (with optional search)
 // Get All Products (with optional search)
 app.get('/api/products', async (req, res) => {
