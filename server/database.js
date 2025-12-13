@@ -77,7 +77,9 @@ const database = {
                  sale_price REAL,
                  sale_date TEXT,
                  service_date TEXT,
-                 barcode TEXT
+                 barcode TEXT,
+                 description TEXT,
+                 purchase_source TEXT
                )`
             : `CREATE TABLE IF NOT EXISTS products (
                  id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -88,7 +90,9 @@ const database = {
                  sale_price REAL,
                  sale_date TEXT,
                  service_date TEXT,
-                 barcode TEXT
+                 barcode TEXT,
+                 description TEXT,
+                 purchase_source TEXT
                )`;
 
         try {
@@ -117,7 +121,9 @@ const database = {
             "ALTER TABLE products ADD COLUMN sponsor_name TEXT",
             // Phase 3: Sales Details
             "ALTER TABLE products ADD COLUMN buyer_name TEXT",
-            "ALTER TABLE products ADD COLUMN exchange_details TEXT"
+            "ALTER TABLE products ADD COLUMN exchange_details TEXT",
+            "ALTER TABLE products ADD COLUMN description TEXT",
+            "ALTER TABLE products ADD COLUMN purchase_source TEXT"
         ];
 
         for (const query of migrationQueries) {
