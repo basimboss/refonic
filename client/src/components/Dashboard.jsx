@@ -74,8 +74,9 @@ const Dashboard = ({ onLogout }) => {
 
     const handleScanResult = async (barcode) => {
         setShowScanner(false);
+        const cleanBarcode = barcode.trim();
         try {
-            const res = await fetch(`/api/products/scan/${barcode}`);
+            const res = await fetch(`/api/products/scan/${cleanBarcode}`);
             const data = await res.json();
             if (res.ok && data.data) {
                 setEditingProduct(data.data);

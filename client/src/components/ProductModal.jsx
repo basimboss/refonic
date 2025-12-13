@@ -366,6 +366,16 @@ const ProductModal = ({ product, onClose, onSave, onDelete }) => {
                                 </button>
                             )}
 
+                            {(formData.status === 'Sales' || formData.status === 'Sold') && (
+                                <button
+                                    type="button"
+                                    onClick={handlePrint}
+                                    className="flex-1 bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 transition-colors shadow-lg"
+                                >
+                                    Print Bill
+                                </button>
+                            )}
+
                             {product?.id && formData.status !== 'Sales' && formData.status !== 'Sold' && (
                                 <button
                                     type="button"
@@ -568,6 +578,12 @@ const ProductModal = ({ product, onClose, onSave, onDelete }) => {
                                 className="flex-1 bg-[#1E1E1E] text-white font-medium py-4 rounded-xl border border-[#333] hover:bg-[#2A2A2A] transition-colors"
                             >
                                 Edit
+                            </button>
+                            <button
+                                onClick={() => window.print()}
+                                className="flex-1 bg-[#1E1E1E] text-white font-medium py-4 rounded-xl border border-[#333] hover:bg-[#2A2A2A] transition-colors flex items-center justify-center gap-2"
+                            >
+                                <span>📥</span> Save PDF
                             </button>
                             <button
                                 onClick={handlePrint}
