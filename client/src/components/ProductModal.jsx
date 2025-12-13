@@ -134,6 +134,26 @@ const ProductModal = ({ product, onClose, onSave, onDelete }) => {
                             />
                         </div>
 
+                        {/* Status Selection */}
+                        <div className="space-y-2">
+                            <label className="text-sm text-[var(--text-rgb-117-117-117)]">Status</label>
+                            <div className="flex flex-wrap gap-3">
+                                {['Stock', 'Sales', 'Sold', 'Service'].map(opt => (
+                                    <button
+                                        key={opt}
+                                        type="button"
+                                        onClick={() => handleSelection('status', opt)}
+                                        className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${formData.status === opt
+                                            ? 'bg-white text-black'
+                                            : 'bg-[#121212] text-[var(--text-rgb-54-65-82)] border border-[#333]'
+                                            }`}
+                                    >
+                                        {opt}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
                         {/* Storage Selection */}
                         <div className="space-y-2">
                             <label className="text-sm text-[var(--text-rgb-117-117-117)]">Select Storage</label>
