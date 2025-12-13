@@ -46,6 +46,9 @@ const Dashboard = ({ onLogout }) => {
                 setIsModalOpen(false);
                 setEditingProduct(null);
                 fetchProducts();
+            } else {
+                const errData = await res.json();
+                alert(`Failed to save product: ${errData.error || 'Unknown error'}`);
             }
         } catch (err) {
             console.error("Error saving product", err);
@@ -108,13 +111,13 @@ const Dashboard = ({ onLogout }) => {
             {/* Filter Tabs */}
             <div className="px-6 mb-6 overflow-x-auto no-scrollbar relative z-10">
                 <div className="flex gap-3">
-                    {['All', 'Stock', 'Sales', 'Services', 'Sold'].map(f => (
+                    {['All', 'Stock', 'Sales', 'Services'].map(f => (
                         <button
                             key={f}
                             onClick={() => setFilter(f === 'Services' ? 'Service' : f)} // Map 'Services' to 'Service' status if needed
                             className={`px-6 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${(filter === f || (filter === 'Service' && f === 'Services'))
-                                    ? 'bg-white text-black shadow-lg scale-105'
-                                    : 'bg-[#1E1E1E] text-white border border-[#333] hover:bg-[#2A2A2A]'
+                                ? 'bg-white text-black shadow-lg scale-105'
+                                : 'bg-[#1E1E1E] text-white border border-[#333] hover:bg-[#2A2A2A]'
                                 }`}
                         >
                             {f}
@@ -136,8 +139,8 @@ const Dashboard = ({ onLogout }) => {
                     >
                         {/* Status Indicator Line */}
                         <div className={`absolute left-0 top-0 bottom-0 w-1 ${product.status === 'Stock' ? 'bg-[var(--text-rgb-167-79-211)]' :
-                                product.status === 'Sales' ? 'bg-[var(--text-rgb-200-211-79)]' :
-                                    'bg-[var(--text-rgb-211-79-79)]'
+                            product.status === 'Sales' ? 'bg-[var(--text-rgb-200-211-79)]' :
+                                'bg-[var(--text-rgb-211-79-79)]'
                             }`}></div>
 
                         <div className="flex justify-between items-start mb-3 pl-3">
@@ -148,8 +151,8 @@ const Dashboard = ({ onLogout }) => {
                             <div className="text-right">
                                 <h3 className="text-[var(--text-rgb-113-113-113)] text-xs font-medium mb-1 uppercase tracking-wider">Status</h3>
                                 <span className={`text-sm font-bold ${product.status === 'Stock' ? 'text-[var(--text-rgb-167-79-211)]' :
-                                        product.status === 'Sales' ? 'text-[var(--text-rgb-200-211-79)]' :
-                                            'text-[var(--text-rgb-211-79-79)]'
+                                    product.status === 'Sales' ? 'text-[var(--text-rgb-200-211-79)]' :
+                                        'text-[var(--text-rgb-211-79-79)]'
                                     }`}>
                                     {product.status}
                                 </span>

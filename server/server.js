@@ -70,6 +70,58 @@ app.post('/api/auth/change-password', async (req, res) => {
 
 // --- Products ---
 
+// Add New Product
+app.post('/api/products', async (req, res) => {
+    const {
+        name, im_code, status, date, sale_price, sale_date, service_date,
+        barcode, storage, ram, sponsor_name, buyer_name, exchange_details, description, purchase_source
+    } = req.body;
+
+    try {
+        const result = await db.query(
+            `INSERT INTO products (
+                name, im_code, status, date, sale_price, sale_date, service_date,
+                barcode, storage, ram, sponsor_name, buyer_name, exchange_details, description, purchase_source
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                name, im_code, status, date, sale_price, sale_date, service_date,
+                barcode, storage, ram, sponsor_name, buyer_name, exchange_details, description, purchase_source
+            ]
+        );
+        res.json({ id: result.lastID, message: 'Product added successfully' });
+    } catch (err) {
+        console.error("Error adding product:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Update Product
+app.put('/api/products/:id', async (req, res) => {
+    const { id } = req.params;
+    const {
+        name, im_code, status, date, sale_price, sale_date, service_date,
+        barcode, storage, ram, sponsor_name, buyer_name, exchange_details, description, purchase_source
+    } = req.body;
+
+    try {
+        await db.query(
+            `UPDATE products SET 
+                name = ?, im_code = ?, status = ?, date = ?, sale_price = ?, sale_date = ?, service_date = ?,
+                barcode = ?, storage = ?, ram = ?, sponsor_name = ?, buyer_name = ?, exchange_details = ?, description = ?, purchase_source = ?
+            WHERE id = ?`,
+            [
+                name, im_code, status, date, sale_price, sale_date, service_date,
+                barcode, storage, ram, sponsor_name, buyer_name, exchange_details, description, purchase_source,
+                id
+            ]
+        );
+        res.json({ message: 'Product updated successfully' });
+    } catch (err) {
+        console.error("Error updating product:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Get All Products (with optional search)
 // Get All Products (with optional search)
 app.get('/api/products', async (req, res) => {
