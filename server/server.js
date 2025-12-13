@@ -150,6 +150,9 @@ app.get('/api/products', async (req, res) => {
     try {
         const result = await db.query(query, params);
         res.json({ data: result.rows });
+    } catch (err) {
+        console.error("Error getting products:", err);
+        res.status(500).json({ error: err.message });
     }
 });
 
