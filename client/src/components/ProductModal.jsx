@@ -765,14 +765,16 @@ const ProductModal = ({ product, onClose, onSave, onDelete }) => {
                                     print-color-adjust: exact;
                                 }
                                 .a4-2-1 {
-                                    position: absolute;
+                                    position: fixed;
                                     top: 0;
                                     left: 0;
                                     width: 100%;
                                     height: 100%;
                                     max-width: none;
-                                    padding: 20px; /* Add some padding so text isn't on the edge */
+                                    padding: 20px;
                                     margin: 0;
+                                    z-index: 99999;
+                                    background: white;
                                 }
                                 button { display: none !important; }
                             }
