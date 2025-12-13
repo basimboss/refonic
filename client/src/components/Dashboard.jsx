@@ -13,7 +13,7 @@ const Dashboard = ({ onLogout }) => {
     const fetchProducts = async () => {
         try {
             const query = new URLSearchParams({ status: filter, search: searchTerm }).toString();
-            const res = await fetch(`/api/products?${query}`);
+            const res = await fetch(`/api/products?${query}`, { cache: 'no-store' });
             const data = await res.json();
             setProducts(data.data || []);
         } catch (err) {
@@ -68,6 +68,7 @@ const Dashboard = ({ onLogout }) => {
             }
         } catch (err) {
             console.error("Error deleting product", err);
+            alert("Error deleting product. Please check your connection.");
         }
     };
 

@@ -150,23 +150,6 @@ app.get('/api/products', async (req, res) => {
     try {
         const result = await db.query(query, params);
         res.json({ data: result.rows });
-    } catch (err) {
-        console.error("Error getting products:", err);
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Scan Barcode (Find Product)
-app.get('/api/products/scan/:barcode', async (req, res) => {
-    const { barcode } = req.params;
-    try {
-        const result = await db.query("SELECT * FROM products WHERE barcode = ?", [barcode]);
-        const row = result.rows[0];
-        if (!row) return res.status(404).json({ message: 'Product not found' });
-        res.json({ data: row });
-    } catch (err) {
-        console.error("Error adding product:", err);
-        res.status(500).json({ error: err.message });
     }
 });
 

@@ -84,10 +84,9 @@ const ProductModal = ({ product, onClose, onSave, onDelete }) => {
         window.print();
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (window.confirm('Are you sure you want to delete this product?')) {
-            if (onDelete) onDelete(product.id);
-            onClose();
+            if (onDelete) await onDelete(product.id);
         }
     };
 
