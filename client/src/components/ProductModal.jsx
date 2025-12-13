@@ -369,10 +369,10 @@ const ProductModal = ({ product, onClose, onSave, onDelete }) => {
                             {(formData.status === 'Sales' || formData.status === 'Sold') && (
                                 <button
                                     type="button"
-                                    onClick={handlePrint}
+                                    onClick={() => setViewMode('SELL_PREVIEW')}
                                     className="flex-1 bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 transition-colors shadow-lg"
                                 >
-                                    Print Bill
+                                    Sold Bill
                                 </button>
                             )}
 
@@ -755,13 +755,18 @@ const ProductModal = ({ product, onClose, onSave, onDelete }) => {
                                     width: 100%;
                                     max-width: none;
                                 }
-                                .a4-2-1, .a4-2-1 * { visibility: visible; }
+                                .a4-2-1, .a4-2-1 * { 
+                                    visibility: visible; 
+                                    -webkit-print-color-adjust: exact;
+                                    print-color-adjust: exact;
+                                }
                                 .a4-2-1 {
                                     position: absolute;
                                     top: 0;
                                     left: 0;
                                     width: 100%;
-                                    padding: 40px; /* Print padding */
+                                    padding: 0; /* Remove padding for full bleed if needed, or keep small */
+                                    margin: 0;
                                 }
                                 button { display: none !important; }
                             }
