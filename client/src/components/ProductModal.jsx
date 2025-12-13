@@ -35,11 +35,7 @@ const ProductModal = ({ product, onClose, onSave, onDelete }) => {
                 purchase_source: product.purchase_source || 'Shop'
             });
 
-            if (product.status === 'Sales' || product.status === 'Sold') {
-                setViewMode('SOLD_DETAILS');
-            } else {
-                setViewMode('DETAILS');
-            }
+            setViewMode('DETAILS');
         } else {
             setFormData({
                 name: '', im_code: '', status: 'Stock',
@@ -138,7 +134,7 @@ const ProductModal = ({ product, onClose, onSave, onDelete }) => {
                         <div className="space-y-2">
                             <label className="text-sm text-[var(--text-rgb-117-117-117)]">Status</label>
                             <div className="flex flex-wrap gap-3">
-                                {['Stock', 'Sales', 'Sold', 'Service'].map(opt => (
+                                {['Stock', 'Sales', 'Service'].map(opt => (
                                     <button
                                         key={opt}
                                         type="button"
@@ -290,6 +286,67 @@ const ProductModal = ({ product, onClose, onSave, onDelete }) => {
                             />
                         </div>
 
+                        {/* Sales Details (Visible if Sales or Sold) */}
+                        {(formData.status === 'Sales' || formData.status === 'Sold') && (
+                            <div className="space-y-4 border-t border-white/10 pt-4 mt-2">
+                                <h3 className="text-[var(--text-rgb-25-81-255)] font-semibold">Sales Details</h3>
+
+                                <div className="space-y-2">
+                                    <label className="text-sm text-[var(--text-rgb-117-117-117)]">Buyer Name</label>
+                                    <input
+                                        name="buyer_name"
+                                        placeholder="Enter Buyer Name"
+                                        value={formData.buyer_name || ''}
+                                        onChange={handleChange}
+                                        className="w-full bg-[#121212] border border-[#333] rounded-xl px-4 py-4 text-white placeholder-[var(--text-rgb-54-65-82)] focus:border-[var(--text-rgb-25-81-255)] outline-none"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-sm text-[var(--text-rgb-200-211-79)]">Sold Price</label>
+                                    <input
+                                        type="text"
+                                        name="sale_price"
+                                        placeholder="0.00"
+                                        value={formData.sale_price || ''}
+                                        onChange={handleChange}
+                                        className="w-full bg-[#121212] border border-[var(--text-rgb-200-211-79)] rounded-xl px-4 py-4 text-white text-xl font-bold placeholder-[var(--text-rgb-54-65-82)] focus:ring-1 focus:ring-[var(--text-rgb-200-211-79)] outline-none"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-sm text-[var(--text-rgb-117-117-117)]">Purchase From</label>
+                                    <div className="flex flex-wrap gap-3">
+                                        {sourceOptions.map(opt => (
+                                            <button
+                                                key={opt}
+                                                type="button"
+                                                onClick={() => handleSelection('purchase_source', opt)}
+                                                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${formData.purchase_source === opt
+                                                    ? 'bg-white text-black'
+                                                    : 'bg-[#121212] text-[var(--text-rgb-54-65-82)] border border-[#333]'
+                                                    }`}
+                                            >
+                                                {opt}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-sm text-[var(--text-rgb-117-117-117)]">Exchange Details</label>
+                                    <textarea
+                                        name="exchange_details"
+                                        placeholder="Device Name, Condition, Price..."
+                                        value={formData.exchange_details || ''}
+                                        onChange={handleChange}
+                                        rows="2"
+                                        className="w-full bg-[#121212] border border-[#333] rounded-xl px-4 py-4 text-white placeholder-[var(--text-rgb-54-65-82)] focus:border-[var(--text-rgb-25-81-255)] outline-none resize-none"
+                                    />
+                                </div>
+                            </div>
+                        )}
+
                         {/* Actions */}
                         <div className="flex gap-4 pt-4">
                             <button
@@ -301,6 +358,16 @@ const ProductModal = ({ product, onClose, onSave, onDelete }) => {
                             </button>
 
                             {product?.id && (
+                                <button
+                                    type="button"
+                                    onClick={handleDelete}
+                                    className="flex-1 bg-red-500/10 text-red-500 font-medium py-4 rounded-xl border border-red-500/20 hover:bg-red-500/20 transition-colors"
+                                >
+                                    Delete
+                                </button>
+                            )}
+
+                            {product?.id && formData.status !== 'Sales' && formData.status !== 'Sold' && (
                                 <button
                                     type="button"
                                     onClick={handleSellClick}

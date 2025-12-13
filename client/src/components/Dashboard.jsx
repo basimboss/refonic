@@ -55,6 +55,22 @@ const Dashboard = ({ onLogout }) => {
         }
     };
 
+    const handleDelete = async (id) => {
+        try {
+            const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                setIsModalOpen(false);
+                setEditingProduct(null);
+                fetchProducts();
+            } else {
+                const errData = await res.json();
+                alert(`Failed to delete product: ${errData.error || 'Unknown error'}`);
+            }
+        } catch (err) {
+            console.error("Error deleting product", err);
+        }
+    };
+
     const handleScanResult = async (barcode) => {
         setShowScanner(false);
         try {
@@ -218,6 +234,7 @@ const Dashboard = ({ onLogout }) => {
                     product={editingProduct}
                     onClose={() => setIsModalOpen(false)}
                     onSave={handleSave}
+                    onDelete={handleDelete}
                 />
             )}
 
