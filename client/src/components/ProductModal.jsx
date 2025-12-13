@@ -739,6 +739,10 @@ const ProductModal = ({ product, onClose, onSave, onDelete }) => {
 
                             /* Print Specifics */
                             @media print {
+                                @page {
+                                    margin: 0;
+                                    size: auto;
+                                }
                                 body * { visibility: hidden; }
                                 .fixed.inset-0 { 
                                     position: absolute; 
@@ -765,7 +769,9 @@ const ProductModal = ({ product, onClose, onSave, onDelete }) => {
                                     top: 0;
                                     left: 0;
                                     width: 100%;
-                                    padding: 0; /* Remove padding for full bleed if needed, or keep small */
+                                    height: 100%;
+                                    max-width: none;
+                                    padding: 20px; /* Add some padding so text isn't on the edge */
                                     margin: 0;
                                 }
                                 button { display: none !important; }
