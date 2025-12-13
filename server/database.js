@@ -74,7 +74,7 @@ const database = {
                  im_code TEXT,
                  status TEXT NOT NULL,
                  date TEXT,
-                 sale_price REAL,
+                 sale_price TEXT,
                  sale_date TEXT,
                  service_date TEXT,
                  barcode TEXT,
@@ -87,7 +87,7 @@ const database = {
                  im_code TEXT,
                  status TEXT NOT NULL,
                  date TEXT,
-                 sale_price REAL,
+                 sale_price TEXT,
                  sale_date TEXT,
                  service_date TEXT,
                  barcode TEXT,
@@ -123,7 +123,9 @@ const database = {
             "ALTER TABLE products ADD COLUMN buyer_name TEXT",
             "ALTER TABLE products ADD COLUMN exchange_details TEXT",
             "ALTER TABLE products ADD COLUMN description TEXT",
-            "ALTER TABLE products ADD COLUMN purchase_source TEXT"
+            "ALTER TABLE products ADD COLUMN purchase_source TEXT",
+            // Phase 7: Change sale_price to TEXT for flexibility
+            "ALTER TABLE products ALTER COLUMN sale_price TYPE TEXT"
         ];
 
         for (const query of migrationQueries) {
